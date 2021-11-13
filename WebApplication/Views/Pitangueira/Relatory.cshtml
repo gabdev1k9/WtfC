@@ -1,0 +1,172 @@
+﻿@model WebApplication.DTO.EmployeeRelatory
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebApplication</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <style>
+        .invisible{
+            display:none;
+        }
+    </style>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Pitangueira" asp-action="Index">WebApplication</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1 justify-content-end">
+                        <li class="nav-item">
+                            <p class="nav-link text-dark">Welcome , @Model.Name</p>
+                        </li>
+                        @{
+                            if (Model.Role == "Manager")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Pitangueira" asp-action="Types">Types</a>
+                                </li>
+                            }
+                        }
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Pitangueira" asp-action="Relatory">Relatory</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Pitangueira" asp-action="Logout">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="input-group">
+                <div class="form-outline">
+                    <label class="form-label" for="form1">Search</label>
+                    <input type="search" id="filterTb" class="form-control" />
+                    <label>Filter by:</label>
+                    <select class="form-control" id="select">
+                        <option value="Employee" selected> Employee</option>
+                        <option value="Client"> Client</option>
+                        <option value="Type"> Type</option>
+                    </select>
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <p>Id</p>
+                        </th>
+                        <th>
+                            <p>Name</p>
+                        </th>
+                        <th>
+                            <p>Comments</p>
+                        </th>
+                        <th>
+                            <p>Client</p>
+                        </th>
+                        <th>
+                            <p>Date</p>
+                        </th>
+                        <th>
+                            <p>Type</p>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ if (Model.Attendances != null)
+                        {
+                            foreach (var item in Model.Attendances)
+                            {
+                                <tr class="Task">
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Id)
+                                    </td>
+                                    <td class="tecName" >
+                                        @Html.DisplayFor(modelItem => item.Employee.UserName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Comments)
+                                    </td>
+                                    <td class="Client">
+                                        @Html.DisplayFor(modelItem => item.Client)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ExecutionDate)
+                                    </td>
+                                    <td class="type">
+                                        @Html.DisplayFor(modelItem => item.Type.Name)
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2021 - WebApplication
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        var campoFiltro = document.querySelector("#filterTb");
+
+        campoFiltro.addEventListener("input", function () {
+            var Nodes = document.querySelectorAll(".Task");
+
+            var select = document.getElementById('select');
+            var value = select.options[select.selectedIndex].value;
+
+            if (this.value.length > 0) { // se eu digitar
+
+                for (var i = 0; i < Nodes.length; i++) {
+
+                    var actual = Nodes[i];
+                    var queryValue = ".tecName"
+                    switch (value) {
+                        case 'Employee':
+                            queryValue = ".tecName";
+                            break;
+                        case 'Client':
+                            queryValue = ".Client";
+                            break;
+                        case 'Type':
+                            queryValue = ".type";
+                            break;
+                    }
+                    var tdN = actual.querySelector(queryValue);
+                    var n = tdN.textContent;
+                    var express = new RegExp(this.value, "i");
+
+                    if (!express.test(n)) {
+                        actual.classList.add("invisible");
+                    } else {
+                        actual.classList.remove("invisible");
+                    }
+                }
+            } else {
+                for (var i = 0; i < Nodes.length; i++) {
+                    var actual = Nodes[i];
+                    actual.classList.remove("invisible");
+                }
+            }
+        });
+    </script>
+</body>
+</html>
